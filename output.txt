@@ -1,0 +1,80 @@
+
+Terminals & $: ['(', ')', '*', '+', '++', '-', '--', '/', 'id', 'num', '$']
+
+Non Terminals: ['S', 'EXP', "EXP'", 'FACTOR', 'ID', "ID'", 'TERM', "TERM'"]
+
+--------------------
+|    isNullable    |
+--------------------
+
+" S " is not nullable 
+" EXP " is not nullable 
+" EXP' " is nullable 
+" FACTOR " is not nullable 
+" ID " is not nullable 
+" ID' " is nullable 
+" TERM " is not nullable 
+" TERM' " is nullable 
+
+--------------------
+|       First       |
+--------------------
+
+S: (,--,num,++,id
+EXP: (,--,num,++,id
+EXP': -,+
+FACTOR: (,--,num,++,id
+ID: --,++,id
+ID': --,++
+TERM: (,--,num,++,id
+TERM': *,/
+
+--------------------
+|      Follow      |
+--------------------
+
+S: $
+EXP: $,)
+EXP': $,)
+FACTOR: /,),*,$,-,+
+ID: /,),*,$,-,+
+ID': /,),*,$,-,+
+TERM: $,),-,+
+TERM': $,),-,+
+
+--------------------
+|    Parse Table    |
+--------------------
+
+           (     )     *     +    ++     -    --     /    id   num     $
+S        [0]    []    []    []   [0]    []   [0]    []   [0]   [0]    []
+EXP      [1]    []    []    []   [1]    []   [1]    []   [1]   [1]    []
+EXP'      []   [4]    []   [2]    []   [3]    []    []    []    []   [4]
+FACTOR  [17]    []    []    []   [9]    []   [9]    []   [9]  [16]    []
+ID        []    []    []    []  [15]    []  [14]    []  [10]    []    []
+ID'       []  [13]  [13]  [13]  [11]  [13]  [12]  [13]    []    []  [13]
+TERM     [5]    []    []    []   [5]    []   [5]    []   [5]   [5]    []
+TERM'     []   [8]   [6]   [8]    []   [8]    []   [7]    []    []   [8]
+
+--------------------
+|     RHS Table     |
+--------------------
+
+0:  EXP' TERM' FACTOR 
+1:  EXP' TERM' FACTOR 
+2:  EXP' TERM' FACTOR + 
+3:  EXP' TERM' FACTOR - 
+4:  
+5:  TERM' FACTOR 
+6:  TERM' FACTOR * 
+7:  TERM' FACTOR / 
+8:  
+9:  ID 
+10:  ID' id 
+11:  ++ 
+12:  -- 
+13:  
+14:  id -- 
+15:  id ++ 
+16:  num 
+17:  ) EXP' TERM' FACTOR ( 
